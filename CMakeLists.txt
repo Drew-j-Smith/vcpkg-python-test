@@ -9,8 +9,17 @@ project(test)
 
 find_package(Python3 COMPONENTS Development REQUIRED)
 
-get_filename_component(Python3_EXECUTABLE_DIR ${Python3_EXECUTABLE} DIRECTORY)
-add_definitions(-DPYTHON_LIB=L"${Python3_EXECUTABLE_DIR}/Lib")
-
 add_executable(test test.cpp)
 target_link_libraries(test PRIVATE Python3::Python)
+
+if(WIN32)
+    add_custom_command(TARGET test POST_BUILD 
+    COMMAND ${Python3_EXECUTABLE} -m venv $<TARGET_FILE_DIR:test>
+    COMMAND $<TARGET_FILE_DIR:test>/Scripts/activate.bat
+    COMMAND python -m pip install -r ${CMAKE_SOURCE_DIR}/requirements.txt > pip_install.log)
+else()
+    add_custom_command(TARGET test POST_BUILD 
+    COMMAND ${Python3_EXECUTABLE} -m venv $<TARGET_FILE_DIR:test>
+    COMMAND $<TARGET_FILE_DIR:test>/Scripts/activate
+    COMMAND python -m pip install -r ${CMAKE_SOURCE_DIR}/requirements.txt > pip_install.log)
+endif()
