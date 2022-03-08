@@ -9,5 +9,8 @@ project(test)
 
 find_package(Python3 COMPONENTS Development REQUIRED)
 
+get_filename_component(Python3_EXECUTABLE_DIR ${Python3_EXECUTABLE} DIRECTORY)
+add_definitions(-DPYTHON_LIB=L"${Python3_EXECUTABLE_DIR}/Lib")
+
 add_executable(test test.cpp)
 target_link_libraries(test PRIVATE Python3::Python)
