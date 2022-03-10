@@ -12,9 +12,17 @@ main(int argc, char *argv[])
         exit(1);
     }
     Py_SetProgramName(program);  /* optional but recommended */
-    Py_Initialize();
+
+    PyConfig config;
+    PyConfig_InitPythonConfig(&config);
+    // For debuging import errors
+    // config.verbose = 2; 
+
+    PyStatus status = Py_InitializeFromConfig(&config);
     PyRun_SimpleString("from time import time,ctime\n"
-                       "print('Today is', ctime(time()))\n");
+                       "print('Today is', ctime(time()))\n"
+                       "import numpy as np\n"
+                       "print('import success')");
     if (Py_FinalizeEx() < 0) {
         exit(120);
     }
